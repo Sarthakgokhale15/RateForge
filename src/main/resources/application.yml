@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: rateforge
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2s
+
+server:
+  port: 8080
+
+rate-limiter:
+  key-prefix: drl
+  default-algorithm: TOKEN_BUCKET
+  policies:
+    free-users:
+      algorithm: TOKEN_BUCKET
+      capacity: 60
+      refill-tokens-per-second: 1.0
+      requested-tokens: 1
+      window-seconds: 60
+    pro-users:
+      algorithm: TOKEN_BUCKET
+      capacity: 600
+      refill-tokens-per-second: 20.0
+      requested-tokens: 1
+      window-seconds: 60
+    api-default:
+      algorithm: TOKEN_BUCKET
+      limit: 100
+      window-seconds: 60
+      capacity: 100
+      refill-tokens-per-second: 10.0
+      leak-rate-per-second: 10.0
+      requested-tokens: 1
+  web:
+    enabled: true
+    key-header: X-User-Id
+    tier-header: X-User-Tier
+    default-policy-name: free-users
+    tier-policies:
+      free: free-users
+      pro: pro-users
+    exclude-paths:
+      - /actuator/**
+      - /error
+      - /favicon.ico
+    path-policies:
+      /api/pro/**: pro-users
+      /api/free/**: free-users
