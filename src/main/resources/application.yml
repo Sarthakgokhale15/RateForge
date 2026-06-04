@@ -6,6 +6,9 @@ spring:
       host: localhost
       port: 6379
       timeout: 2s
+  kafka:
+    # Uncomment and set your Kafka bootstrap servers to enable analytics publishing
+    # bootstrap-servers: localhost:9092
 
 server:
   port: 8080

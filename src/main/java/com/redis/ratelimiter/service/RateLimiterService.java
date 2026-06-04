@@ -17,9 +17,15 @@ public class RateLimiterService {
 
     private final Map<AlgorithmType, RateLimiterAlgorithm> algorithms = new EnumMap<>(AlgorithmType.class);
     private final RateLimiterProperties properties;
+    private final com.redis.ratelimiter.service.NodeInfoProvider nodeInfoProvider;
+    private final java.util.Optional<com.redis.ratelimiter.service.analytics.AnalyticsProducer> analyticsProducer;
 
-    public RateLimiterService(List<RateLimiterAlgorithm> algorithmBeans, RateLimiterProperties properties) {
+    public RateLimiterService(List<RateLimiterAlgorithm> algorithmBeans, RateLimiterProperties properties,
+                              com.redis.ratelimiter.service.NodeInfoProvider nodeInfoProvider,
+                              java.util.Optional<com.redis.ratelimiter.service.analytics.AnalyticsProducer> analyticsProducer) {
         this.properties = properties;
+        this.nodeInfoProvider = nodeInfoProvider;
+        this.analyticsProducer = analyticsProducer;
         algorithmBeans.forEach(algo -> this.algorithms.put(algo.algorithmType(), algo));
     }
 
@@ -31,7 +37,18 @@ public class RateLimiterService {
         if (engine == null) {
             throw new IllegalArgumentException("Unsupported algorithm: " + algorithm);
         }
-        return engine.allow(request.getKey(), policy);
+        RateLimitResult result = engine.allow(request.getKey(), policy);
+
+        // publish analytics event asynchronously if producer available
+        analyticsProducer.ifPresent(producer -> {
+            com.redis.ratelimiter.service.analytics.AnalyticsEvent ev = new com.redis.ratelimiter.service.analytics.AnalyticsEvent(
+                    request.getKey(), result.allowed(), result.remaining(), result.retryAfterSeconds(),
+                    result.algorithm(), request.getPolicyName(), nodeInfoProvider.currentNodeId()
+            );
+            producer.publish(ev);
+        });
+
+        return result;
     }
 
     private RateLimitPolicy resolvePolicy(RateLimitRequest request) {

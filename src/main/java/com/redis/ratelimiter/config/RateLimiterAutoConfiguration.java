@@ -71,8 +71,11 @@ public class RateLimiterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RateLimiterService rateLimiterService(List<RateLimiterAlgorithm> algorithms, RateLimiterProperties properties) {
-        return new RateLimiterService(algorithms, properties);
+    public RateLimiterService rateLimiterService(List<RateLimiterAlgorithm> algorithms,
+                                                 RateLimiterProperties properties,
+                                                 NodeInfoProvider nodeInfoProvider,
+                                                 java.util.Optional<com.redis.ratelimiter.service.analytics.AnalyticsProducer> analyticsProducer) {
+        return new RateLimiterService(algorithms, properties, nodeInfoProvider, analyticsProducer);
     }
 
     @Bean
