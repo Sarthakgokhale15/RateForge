@@ -16,6 +16,7 @@ public class RateLimiterProperties {
     private AlgorithmType defaultAlgorithm = AlgorithmType.TOKEN_BUCKET;
     private Map<String, RateLimitPolicy> policies = new HashMap<>();
     private Web web = new Web();
+    private Kafka kafka = new Kafka();
 
     public String getKeyPrefix() {
         return keyPrefix;
@@ -48,6 +49,10 @@ public class RateLimiterProperties {
     public void setWeb(Web web) {
         this.web = web;
     }
+
+    public Kafka getKafka() { return kafka; }
+
+    public void setKafka(Kafka kafka) { this.kafka = kafka; }
 
     public static class Web {
         private boolean enabled = true;
@@ -113,5 +118,20 @@ public class RateLimiterProperties {
         public void setExcludePaths(List<String> excludePaths) {
             this.excludePaths = excludePaths;
         }
+    }
+
+    public static class Kafka {
+        private boolean enabled = false;
+        private String bootstrapServers = "localhost:9092";
+        private String topic = "rateforge.events";
+
+        public boolean isEnabled() { return enabled; }
+        public void setEnabled(boolean enabled) { this.enabled = enabled; }
+
+        public String getBootstrapServers() { return bootstrapServers; }
+        public void setBootstrapServers(String bootstrapServers) { this.bootstrapServers = bootstrapServers; }
+
+        public String getTopic() { return topic; }
+        public void setTopic(String topic) { this.topic = topic; }
     }
 }
