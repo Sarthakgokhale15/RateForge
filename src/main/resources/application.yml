@@ -9,7 +9,7 @@ spring:
   kafka:
     # Kafka bootstrap servers used by Spring Kafka. Can be overridden with
     # environment variable SPRING_KAFKA_BOOTSTRAP_SERVERS.
-    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
 
 server:
   port: 8080
@@ -55,5 +55,5 @@ rate-limiter:
       /api/free/**: free-users
   kafka:
     enabled: ${RATE_LIMITER_KAFKA_ENABLED:true}
-    bootstrap-servers: ${RATE_LIMITER_KAFKA_BOOTSTRAP_SERVERS:${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}}
+    bootstrap-servers: ${RATE_LIMITER_KAFKA_BOOTSTRAP_SERVERS:${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka:9092}}
     topic: ${RATE_LIMITER_KAFKA_TOPIC:rateforge.events}

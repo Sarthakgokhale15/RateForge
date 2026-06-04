@@ -121,8 +121,8 @@ public class RateLimiterProperties {
     }
 
     public static class Kafka {
-        private boolean enabled = false;
-        private String bootstrapServers = "localhost:9092";
+        private boolean enabled = true;
+        private String bootstrapServers = "kafka:9092";
         private String topic = "rateforge.events";
 
         public boolean isEnabled() { return enabled; }

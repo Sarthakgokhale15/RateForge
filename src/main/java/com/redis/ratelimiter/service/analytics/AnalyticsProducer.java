@@ -2,6 +2,7 @@ package com.redis.ratelimiter.service.analytics;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.redis.ratelimiter.config.RateLimiterProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ public class AnalyticsProducer {
 
     private static final Logger log = LoggerFactory.getLogger(AnalyticsProducer.class);
     private final Optional<KafkaTemplate<String, String>> kafkaTemplate;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private final String topic;
     private final boolean enabled;
 
