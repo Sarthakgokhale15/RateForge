@@ -7,8 +7,9 @@ spring:
       port: 6379
       timeout: 2s
   kafka:
-    # Uncomment and set your Kafka bootstrap servers to enable analytics publishing
-    # bootstrap-servers: localhost:9092
+    # Kafka bootstrap servers used by Spring Kafka. Can be overridden with
+    # environment variable SPRING_KAFKA_BOOTSTRAP_SERVERS.
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
 
 server:
   port: 8080
@@ -52,3 +53,7 @@ rate-limiter:
     path-policies:
       /api/pro/**: pro-users
       /api/free/**: free-users
+  kafka:
+    enabled: ${RATE_LIMITER_KAFKA_ENABLED:true}
+    bootstrap-servers: ${RATE_LIMITER_KAFKA_BOOTSTRAP_SERVERS:${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}}
+    topic: ${RATE_LIMITER_KAFKA_TOPIC:rateforge.events}
