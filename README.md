@@ -16,7 +16,7 @@ Add dependency (install/publish this artifact in your Maven repo first):
 
 ```xml
 <dependency>
-  <groupId>com.redis</groupId>
+  <groupId>io.github.sarthakgokhale</groupId>
   <artifactId>rateforge</artifactId>
   <version>1.0.0</version>
 </dependency>
@@ -99,3 +99,34 @@ mvn clean package -DskipTests
 This produces:
 - Standard dependency jar: `target/rateforge-1.0.0.jar`
 - Optional executable jar: `target/rateforge-1.0.0-exec.jar`
+
+## Quick Showcase (recommended)
+
+1. Build and install the library to your local Maven repository:
+
+```bash
+mvn clean install -DskipTests
+```
+
+2. Start Redis locally (one-off):
+
+```bash
+# macOS with Homebrew
+redis-server --port 6379 --save "" --appendonly no --daemonize yes
+```
+
+3. Run the example app that demonstrates tier-based limiting:
+
+```bash
+mvn -f example-hello/pom.xml spring-boot:run
+```
+
+4. In another terminal, run the included demo script to compare tiers:
+
+```bash
+./example-hello/demo_tier_test.sh free 15
+./example-hello/demo_tier_test.sh pro 15
+```
+
+Each run will print the HTTP status and the `X-RateLimit-*` headers so you can observe different quotas for `free` vs `pro` tiers.
+

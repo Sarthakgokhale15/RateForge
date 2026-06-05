@@ -48,4 +48,13 @@ public class KafkaProducerAutoConfiguration {
     public KafkaTemplate<String, String> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public com.redis.ratelimiter.service.analytics.AnalyticsProducer analyticsProducer(
+            java.util.Optional<KafkaTemplate<String, String>> kafkaTemplate,
+            RateLimiterProperties properties
+    ) {
+        return new com.redis.ratelimiter.service.analytics.AnalyticsProducer(kafkaTemplate, properties);
+    }
 }

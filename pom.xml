@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.redis</groupId>
+    <groupId>io.github.sarthakgokhale</groupId>
     <artifactId>rateforge</artifactId>
     <version>1.0.0</version>
     <name>RateForge</name>
