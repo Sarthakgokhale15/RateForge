@@ -21,7 +21,12 @@ mvn -f example-hello/pom.xml spring-boot:run
 ./example-hello/demo_tier_test.sh pro 15
 ```
 
-3) Enable Kafka analytics (optional, opt-in per app)
+3) Annotation-based usage (default)
+
+- The library is annotation-first: annotate controller methods or classes with `@RateLimited(policy="...")` to enable rate limiting for those endpoints.
+- Global servlet filter mode is still available but opt-in. To switch to global filter mode, set `rate-limiter.web.mode: filter` in your `application.yml`.
+
+4) Enable Kafka analytics (optional, opt-in per app)
 
 - In the consuming application's `application.yml` set:
 

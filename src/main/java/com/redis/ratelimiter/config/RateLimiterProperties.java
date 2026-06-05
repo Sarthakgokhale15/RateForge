@@ -56,6 +56,8 @@ public class RateLimiterProperties {
 
     public static class Web {
         private boolean enabled = true;
+        // mode: "annotation" | "filter". Default: annotation (annotation-based usage)
+        private String mode = "annotation";
         private String defaultPolicyName = "api-default";
         private String tierHeader = "X-User-Tier";
         private String keyHeader = "X-User-Id";
@@ -69,6 +71,14 @@ public class RateLimiterProperties {
 
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
+        }
+
+        public String getMode() {
+            return mode;
+        }
+
+        public void setMode(String mode) {
+            this.mode = mode;
         }
 
         public String getDefaultPolicyName() {

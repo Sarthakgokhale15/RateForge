@@ -68,7 +68,9 @@ The library resolves the policy:
 - `free` -> `free-users`
 - `pro` -> `pro-users`
 
-Rate limit decisions are enforced in a servlet filter for all incoming requests except excluded paths.
+Rate limit decisions are annotation-driven by default. Annotate controller methods or classes with `@RateLimited` to enable rate limiting for those endpoints.
+
+If you prefer the global servlet filter approach, set `rate-limiter.web.mode: filter` in your `application.yml` to enable the filter for all requests (respecting `excludePaths`).
 
 ## Optional Path-Based Policies
 

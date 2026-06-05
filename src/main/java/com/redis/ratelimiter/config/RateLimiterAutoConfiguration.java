@@ -99,12 +99,12 @@ public class RateLimiterAutoConfiguration {
         return new DefaultRateLimitPolicyResolver(properties);
     }
 
-    @Bean
-    @ConditionalOnClass(FilterRegistrationBean.class)
-    @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-    @ConditionalOnProperty(prefix = "rate-limiter.web", name = "enabled", havingValue = "true", matchIfMissing = true)
-    @ConditionalOnMissingBean(name = "rateLimitFilterRegistration")
-    public FilterRegistrationBean<RateLimitWebFilter> rateLimitFilterRegistration(
+        @Bean
+        @ConditionalOnClass(FilterRegistrationBean.class)
+        @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+        @ConditionalOnProperty(prefix = "rate-limiter.web", name = "mode", havingValue = "filter")
+        @ConditionalOnMissingBean(name = "rateLimitFilterRegistration")
+        public FilterRegistrationBean<RateLimitWebFilter> rateLimitFilterRegistration(
             RateLimiterService rateLimiterService,
             RateLimitKeyResolver keyResolver,
             RateLimitPolicyResolver policyResolver,
@@ -127,7 +127,7 @@ public class RateLimiterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "rate-limiter.web", name = "annotation-enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "rate-limiter.web", name = "mode", havingValue = "annotation", matchIfMissing = true)
     public AnnotationRateLimitInterceptor annotationRateLimitInterceptor(RateLimiterService rateLimiterService,
                                                                          RateLimitKeyResolver keyResolver,
                                                                          RateLimiterProperties properties) {
@@ -136,7 +136,7 @@ public class RateLimiterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "rate-limiter.web", name = "annotation-enabled", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "rate-limiter.web", name = "mode", havingValue = "annotation", matchIfMissing = true)
     public WebMvcConfigurer rateLimiterWebMvcConfigurer(AnnotationRateLimitInterceptor interceptor) {
         return new WebMvcConfigurer() {
             @Override
