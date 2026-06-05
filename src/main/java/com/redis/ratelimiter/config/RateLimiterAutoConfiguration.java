@@ -24,6 +24,9 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import com.redis.ratelimiter.integration.AnnotationRateLimitInterceptor;
 
 import java.util.List;
 
@@ -120,5 +123,26 @@ public class RateLimiterAutoConfiguration {
         registration.setName("distributedRateLimiterFilter");
         registration.addUrlPatterns("/*");
         return registration;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "rate-limiter.web", name = "annotation-enabled", havingValue = "true", matchIfMissing = true)
+    public AnnotationRateLimitInterceptor annotationRateLimitInterceptor(RateLimiterService rateLimiterService,
+                                                                         RateLimitKeyResolver keyResolver,
+                                                                         RateLimiterProperties properties) {
+        return new AnnotationRateLimitInterceptor(rateLimiterService, keyResolver, properties);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "rate-limiter.web", name = "annotation-enabled", havingValue = "true", matchIfMissing = true)
+    public WebMvcConfigurer rateLimiterWebMvcConfigurer(AnnotationRateLimitInterceptor interceptor) {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addInterceptors(InterceptorRegistry registry) {
+                registry.addInterceptor(interceptor);
+            }
+        };
     }
 }
