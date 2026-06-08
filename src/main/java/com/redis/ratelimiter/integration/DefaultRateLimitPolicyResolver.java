@@ -12,9 +12,19 @@ public class DefaultRateLimitPolicyResolver implements RateLimitPolicyResolver {
 
     private final RateLimiterProperties properties;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private final java.util.Map<String, String> normalizedTierPolicies = new java.util.HashMap<>();
 
     public DefaultRateLimitPolicyResolver(RateLimiterProperties properties) {
         this.properties = properties;
+        // normalize tier policy keys to support case-insensitive matching and flexible tier names
+        LinkedHashMap<String, String> tierPolicies = properties.getWeb().getTierPolicies();
+        if (tierPolicies != null) {
+            for (Map.Entry<String, String> e : tierPolicies.entrySet()) {
+                if (e.getKey() != null) {
+                    normalizedTierPolicies.put(e.getKey().trim().toLowerCase(), e.getValue());
+                }
+            }
+        }
     }
 
     @Override
@@ -32,9 +42,15 @@ public class DefaultRateLimitPolicyResolver implements RateLimitPolicyResolver {
         if (tierHeader != null && !tierHeader.isBlank()) {
             String tier = request.getHeader(tierHeader);
             if (tier != null && !tier.isBlank()) {
-                String policy = properties.getWeb().getTierPolicies().get(tier);
+                String lookup = tier.trim().toLowerCase();
+                String policy = normalizedTierPolicies.get(lookup);
                 if (policy != null && !policy.isBlank()) {
                     return policy;
+                }
+                // fallback: try direct lookup in original map (in case consumer used exact keys)
+                String policyDirect = properties.getWeb().getTierPolicies().get(tier);
+                if (policyDirect != null && !policyDirect.isBlank()) {
+                    return policyDirect;
                 }
             }
         }

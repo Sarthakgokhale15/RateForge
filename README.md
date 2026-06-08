@@ -72,6 +72,45 @@ Rate limit decisions are annotation-driven by default. Annotate controller metho
 
 If you prefer the global servlet filter approach, set `rate-limiter.web.mode: filter` in your `application.yml` to enable the filter for all requests (respecting `excludePaths`).
 
+Configurable tiers
+------------------
+
+The library supports any number of tiers that you configure in your application. Define arbitrary tier names under `rate-limiter.web.tier-policies` and map each tier to a policy defined in `rate-limiter.policies`.
+
+Notes:
+- Tier names are matched case-insensitively (the resolver normalizes keys).
+- You may add as many tiers as your product needs (for example: free, bronze, silver, gold, platinum, enterprise).
+- Each policy referenced by a tier must exist under `rate-limiter.policies`.
+
+Example (6 tiers):
+
+```yaml
+rate-limiter:
+  web:
+    tier-header: X-User-Tier
+    default-policy-name: free-users
+    tier-policies:
+      free: free-users
+      bronze: bronze-users
+      silver: silver-users
+      gold: gold-users
+      platinum: platinum-users
+      enterprise: enterprise-users
+  policies:
+    free-users:
+      algorithm: TOKEN_BUCKET
+      capacity: 60
+      refill-tokens-per-second: 1.0
+      requested-tokens: 1
+    bronze-users: { algorithm: TOKEN_BUCKET, capacity: 120, refill-tokens-per-second: 2.0, requested-tokens: 1 }
+    silver-users: { algorithm: TOKEN_BUCKET, capacity: 300, refill-tokens-per-second: 5.0, requested-tokens: 1 }
+    gold-users:   { algorithm: TOKEN_BUCKET, capacity: 600, refill-tokens-per-second: 10.0, requested-tokens: 1 }
+    platinum-users: { algorithm: TOKEN_BUCKET, capacity: 1200, refill-tokens-per-second: 20.0, requested-tokens: 1 }
+    enterprise-users: { algorithm: TOKEN_BUCKET, capacity: 5000, refill-tokens-per-second: 50.0, requested-tokens: 1 }
+```
+
+If you want tiers to be changeable at runtime without restarting, consider using Spring Cloud Config / `@RefreshScope` or expose a secure admin endpoint to reload configuration; I can add an optional reload endpoint if you'd like.
+
 ## Optional Path-Based Policies
 
 ```yaml
