@@ -109,7 +109,7 @@ rate-limiter:
     enterprise-users: { algorithm: TOKEN_BUCKET, capacity: 5000, refill-tokens-per-second: 50.0, requested-tokens: 1 }
 ```
 
-If you want tiers to be changeable at runtime without restarting, consider using Spring Cloud Config / `@RefreshScope` or expose a secure admin endpoint to reload configuration; I can add an optional reload endpoint if you'd like.
+Tiers can be made changeable at runtime by using Spring Cloud Config / `@RefreshScope` or by exposing a secure admin endpoint to reload configuration.
 
 ## Optional Path-Based Policies
 
