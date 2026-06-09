@@ -91,5 +91,3 @@ rate-limiter:
 
 - If analytics do not appear: ensure `rate-limiter.kafka.enabled=true` and a `KafkaTemplate` bean exists (or let auto-config create one by setting bootstrap servers).
 - If rate limiting behaves unexpectedly: inspect `X-RateLimit-*` headers returned by the app for policy and remaining tokens.
-
-If you want, I can also generate a short `docker-compose.demo.yml` (Redis + Zookeeper + Kafka) for local reproducible demos.
